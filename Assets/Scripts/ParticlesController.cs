@@ -29,7 +29,7 @@ public class ParticlesController: MonoBehaviour{
             for  (int i = 0; i< numCollisionEvents; i++){
                 Vector3 pos = collisionEvents[i].intersection;
                 float radius = Random.Range(minRadius, maxRadius);
-                PaintManager.instance.paint(p, pos, radius, hardness, strength, paintColor);
+                //PaintManager.instance.paint(p, pos, radius, hardness, strength, paintColor);
             }
         }
     }

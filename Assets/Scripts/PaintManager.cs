@@ -51,12 +51,14 @@ public class PaintManager : Singleton<PaintManager>{
     }
 
 
-    public void paint(Paintable paintable, Vector3 pos, float radius = 1f, float hardness = .5f, float strength = .5f, Color? color = null){
+    public void paint(Paintable paintable, Vector3 pos, Vector3 surfaceDirection, float radius = 1f, float hardness = .5f, float strength = .5f, Color? color = null){
         RenderTexture mask = paintable.getMask();
         RenderTexture uvIslands = paintable.getUVIslands();
         RenderTexture extend = paintable.getExtend();
         RenderTexture support = paintable.getSupport();
         Renderer rend = paintable.getRenderer();
+        
+        paintMaterial.SetVector ("_SurfaceDirection", surfaceDirection);
 
         paintMaterial.SetFloat(prepareUVID, 0);
         paintMaterial.SetVector(positionID, pos);
@@ -67,15 +69,17 @@ public class PaintManager : Singleton<PaintManager>{
         paintMaterial.SetColor(colorID, color ?? Color.red);
         extendMaterial.SetFloat(uvOffsetID, paintable.extendsIslandOffset);
         extendMaterial.SetTexture(uvIslandsID, uvIslands);
-
+        
+        
         command.SetRenderTarget(mask);
-        command.DrawRenderer(rend, paintMaterial, 0);
-
+        command.DrawRenderer (rend, paintMaterial);
+        
         command.SetRenderTarget(support);
         command.Blit(mask, support);
 
         command.SetRenderTarget(extend);
         command.Blit(mask, extend, extendMaterial);
+        //command.Blit(mask, extend);
 
         Graphics.ExecuteCommandBuffer(command);
         command.Clear();
